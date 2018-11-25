@@ -31,11 +31,12 @@ fn main() {
                           	   .takes_value(true))
                           .get_matches();
 
-    let bam_file: &str = matches.value_of("READS").unwrap();
+    let reads_file: &str = matches.value_of("READS").unwrap();
     let regions_file: &str = matches.value_of("REGIONS").unwrap();
     let threads: usize = matches.value_of("THREADS").unwrap_or("1").parse().unwrap();
 	let mapq: u8 = matches.value_of("MAPQ").unwrap_or("0").parse().unwrap();
 
-    println!("{:?} - {:?} - {:?} - {:?}",bam_file, regions_file, threads, mapq );
+    let f = frip::frip::rip(reads_file, regions_file, threads, mapq);
+    //println!("{:?} - {:?} - {:?} - {:?} - {:?}",reads_file, regions_file, threads, mapq ,f);
 
 }

@@ -233,6 +233,7 @@ version = "0.1.0"
 dependencies = [
  "bio 0.23.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "clap 2.27.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lazy_static 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "quick-error 1.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "rust-htslib 0.22.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]

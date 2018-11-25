@@ -2,6 +2,8 @@ use bio::data_structures::interval_tree::IntervalTree;
 use std::collections::HashMap;
 use std::str;
 use core::ops::Range;
+use rust_htslib::bam::record::Record;
+use rust_htslib::bam::HeaderView;
 
 #[derive(Debug)]
 pub struct GenomeTree {
@@ -35,18 +37,34 @@ impl GenomeTree {
         let mut chrom: String;
 
         while let Some(r) =  region_records.next() {
-            record = r.unwrap();
-            chrom = record.chrom().to_string();
-            start = record.start() as u32;
-            end = record.end() as u32;
-            blank.inner.entry(chrom)
-                     .and_modify(|a| a.insert(Range  {start: start, end: end},0))
-                     .or_insert({ let mut a = IntervalTree::new();
-                                  a.insert(Range  {start: start, end: end},0);
-                                  a // return updated range
-                                  });
+            //TODO: handle circular contigs??
+            match r {
+                Ok(record) => {
+                    chrom = record.chrom().to_string();
+                    start = record.start() as u32;
+                    end = record.end() as u32;
+                    blank.inner.entry(chrom)
+                             .and_modify(|a| a.insert(Range  {start: start, end: end},0))
+                             .or_insert({ let mut a = IntervalTree::new();
+                                          a.insert(Range  {start: start, end: end},0);
+                                          a // return updated range
+                                          });
+                },
+                Err(e) => {
+                    continue;
+                }
+            };
+
         };
         Ok(blank)
+    }
+
+    pub fn tally_overlap(&self, chr: &str, r: &Range<u32>) {
+        // TODO
+    }
+
+    pub fn find_mut(&self, chr: &str, r: &Range<u32>) {
+        // TODO
     }
 }
 
