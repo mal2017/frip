@@ -37,7 +37,7 @@ impl GenomeTree {
         let mut chrom: String;
 
         while let Some(r) =  region_records.next() {
-            //TODO: handle circular contigs??
+            // TODO: handle circular contigs??
             match r {
                 Ok(record) => {
                     chrom = record.chrom().to_string();
@@ -59,13 +59,11 @@ impl GenomeTree {
         Ok(blank)
     }
 
-    pub fn tally_overlap(&self, chr: &str, r: &Range<u32>) {
-        // TODO
+    pub fn tally_overlap(&self, chr: &str, r: &Range<u32>) -> usize {
+        let contig = self.inner.get(chr).unwrap();
+        contig.find(r).count()
     }
 
-    pub fn find_mut(&self, chr: &str, r: &Range<u32>) {
-        // TODO
-    }
 }
 
 

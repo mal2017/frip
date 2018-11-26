@@ -7,7 +7,7 @@ use bio::data_structures::interval_tree::IntervalTree;
 use core::ops::Range;
 use std::str;
 
-pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8) -> u32 {
+pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) -> f64 {
     let mut g = GenomeTree::from_bed_path(regions_file).unwrap();
 
     let mut b = bam::Reader::from_path(reads_file).unwrap();
@@ -19,18 +19,38 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8) -> u32 {
 
     let mut rec = bam::Record::new();
 
+    let mut tot: u32 = 0;
+    let mut ip: u32 = 0;
+
+    let mut chr: &str;
+    let mut start: i32;
+    let mut end: i32;
 
     while let Ok(r) = b.read(&mut rec) {
+        // TODO check for primary alignment
+        tot = tot + 1;
         match rec.mapq() > q {
-            true => g.tally_overlap("chr4", &Range { start: 1000, end: 2000} ),
+            true => {
+                chr = tid_lookup.get(&(rec.tid() as u32)).unwrap();
+                if rec.is_reverse() {
+                    end = rec.pos();
+                    start = end - (rec.seq().len() as i32);
+                } else {
+                    start = rec.pos();
+                    end = start + (rec.seq().len() as i32);
+                };
+                ip = ip + (g.tally_overlap(&chr, &Range { start: start as u32, end: end as u32} ) > 0) as u32
+            },
             false => continue,
         };
 
     };
 
-
-
-    5
+    if nofrac {
+        ip as f64
+    } else {
+        ip as f64 / tot as f64
+    }
 }
 
 

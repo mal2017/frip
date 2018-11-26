@@ -29,14 +29,19 @@ fn main() {
                           	   .short("p")
                           	   .long("threads")
                           	   .takes_value(true))
+						  .arg(Arg::with_name("RIP")
+						  	   .help("Return the number of reads in peaks. otherwise returns the fraction of reads in peaks.")
+							   .short("r")
+							   .long("rip"))
                           .get_matches();
 
     let reads_file: &str = matches.value_of("READS").unwrap();
     let regions_file: &str = matches.value_of("REGIONS").unwrap();
     let threads: usize = matches.value_of("THREADS").unwrap_or("1").parse().unwrap();
 	let mapq: u8 = matches.value_of("MAPQ").unwrap_or("0").parse().unwrap();
+	let nofrac: bool = matches.is_present("RIP");
 
-    let f = frip::frip::rip(reads_file, regions_file, threads, mapq);
-    //println!("{:?} - {:?} - {:?} - {:?} - {:?}",reads_file, regions_file, threads, mapq ,f);
+    let f = frip::frip::rip(reads_file, regions_file, threads, mapq, nofrac);
+    println!("{:?}", f);
 
 }
