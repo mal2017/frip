@@ -60,8 +60,11 @@ impl GenomeTree {
     }
 
     pub fn tally_overlap(&self, chr: &str, r: &Range<u32>) -> usize {
-        let contig = self.inner.get(chr).unwrap();
-        contig.find(r).count()
+        let contig = self.inner.get(chr);
+        match contig {
+            Some(c) => c.find(r).count(),
+            None => 0
+        }
     }
 
 }

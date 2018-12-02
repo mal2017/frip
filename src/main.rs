@@ -10,7 +10,7 @@ fn main() {
 	let matches = App::new("frip")
                           .version("0.1.0")
                           .author("Matt Lawlor <matt.a.lawlor@gmail.com>")
-                          .about("Find the FRIP score for a targeted NGS experiment. Useful for ChIPseq, ATACseq, and related assays.")
+                          .about("Find the FRIP score for a targeted NGS experiment. Useful for ChIPseq, ATACseq, and related assays. Note that this will only consider primary alignments.")
                           .arg(Arg::with_name("READS")
                                .help("bam/sam/cram")
                                .required(true)

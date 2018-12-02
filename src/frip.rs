@@ -27,8 +27,14 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
     let mut end: i32;
 
     while let Ok(r) = b.read(&mut rec) {
-        // TODO check for primary alignment
-        tot = tot + 1;
+        // Check that record is
+        match !rec.is_unmapped() & !rec.is_supplementary() {
+            true => {
+                tot = tot + 1;
+            },
+            false => continue,
+        };
+
         match rec.mapq() > q {
             true => {
                 chr = tid_lookup.get(&(rec.tid() as u32)).unwrap();
