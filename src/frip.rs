@@ -69,3 +69,27 @@ pub fn tid_2_contig(h: &HeaderView) -> HashMap<u32, String> {
 	}
 	dict
 }
+
+
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+    use super::*;
+
+    #[test]
+    fn correct_rip() {
+        let bampath = Path::new("test/test_1.bam").to_str().unwrap();
+        let bedpath = Path::new("test/test_1.bed").to_str().unwrap();
+        let rip = super::rip(bampath, bedpath, 1, 0, true);
+        assert_eq!(rip, 34 as f64);
+    }
+
+    #[test]
+    fn correct_frip() {
+        let bampath = Path::new("test/test_1.bam").to_str().unwrap();
+        let bedpath = Path::new("test/test_1.bed").to_str().unwrap();
+        let frip = super::rip(bampath, bedpath, 1, 0, false);
+        assert_eq!(frip, 0.85 as f64);
+    }
+}
