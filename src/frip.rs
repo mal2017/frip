@@ -19,8 +19,8 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
 
     let mut rec = bam::Record::new();
 
-    let mut tot: u32 = 0;
-    let mut ip: u32 = 0;
+    let mut tot: f64 = 0f64;
+    let mut ip: f64 = 0f64;
 
     let mut chr: &str;
     let mut start: i32;
@@ -30,7 +30,7 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
         // Check that record is
         match !rec.is_unmapped() & !rec.is_supplementary() {
             true => {
-                tot = tot + 1;
+                tot = tot + 1f64;
             },
             false => continue,
         };
@@ -45,7 +45,7 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
                     start = rec.pos();
                     end = start + (rec.seq().len() as i32);
                 };
-                ip = ip + (g.tally_overlap(&chr, &Range { start: start as u32, end: end as u32} ) > 0) as u32
+                ip = ip + (g.tally_overlap(&chr, &Range { start: start as u32, end: end as u32} ) > 0) as u64 as f64
             },
             false => continue,
         };
@@ -53,9 +53,9 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
     };
 
     if nofrac {
-        ip as f64
+        ip
     } else {
-        ip as f64 / tot as f64
+        ip / tot
     }
 }
 
