@@ -3,13 +3,13 @@ use rust_htslib::bam;
 use rust_htslib::bam::Read;
 use rust_htslib::bam::HeaderView;
 use std::collections::HashMap;
+use rust_htslib::bam::record::*;
 use bio::data_structures::interval_tree::IntervalTree;
 use core::ops::Range;
 use std::str;
 
 pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) -> f64 {
     let mut g = GenomeTree::from_bed_path(regions_file).unwrap();
-
     let mut b = bam::Reader::from_path(reads_file).unwrap();
     b.set_threads(p);
 
@@ -38,13 +38,8 @@ pub fn rip(reads_file: &str, regions_file: &str, p: usize, q: u8, nofrac: bool) 
         match rec.mapq() > q {
             true => {
                 chr = tid_lookup.get(&(rec.tid() as u32)).unwrap();
-                if rec.is_reverse() {
-                    end = rec.pos();
-                    start = end - (rec.seq().len() as i32);
-                } else {
-                    start = rec.pos();
-                    end = start + (rec.seq().len() as i32);
-                };
+                start = rec.pos();
+                end = rec.cigar().end_pos().unwrap();
                 ip = ip + (g.tally_overlap(&chr, &Range { start: start as u32, end: end as u32} ) > 0) as u64 as f64
             },
             false => continue,
